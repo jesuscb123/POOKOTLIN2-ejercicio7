@@ -1,5 +1,5 @@
 class Persona(dni: String, cuenta: Cuenta) {
-    val listaCuentas = Array<Cuenta>(3) {cuenta}
+    val listaCuentas = Array<Cuenta?>(3) {null}
     val dni = dni
     var cuentasAsociadas = 1
 
@@ -16,9 +16,9 @@ class Persona(dni: String, cuenta: Cuenta) {
     companion object{
         const val MAX_CUENTAS = 3
         fun hacerTransferencia(personaA: Persona, personaB: Persona, numerocuentaA: Int, numerocuentaB: Int, cantidad: Double): Boolean {
-            val cuenta1 = personaA.listaCuentas.find { it.numeroCuenta == numerocuentaA}
-            val cuenta2 = personaB.listaCuentas.find { it.numeroCuenta == numerocuentaB}
-            if(cuenta1 != null && cuenta2 != null && cuenta1.saldo > 0){
+            val cuenta1 = personaA.listaCuentas.find { it?.numeroCuenta == numerocuentaA}
+            val cuenta2 = personaB.listaCuentas.find { it?.numeroCuenta == numerocuentaB}
+            if(cuenta1 != null && cuenta2 != null && cuenta1.saldo > 0 && !personaA.esMoroso()){
                 cuenta1.realizarPago(cantidad)
                 cuenta2.recibirAbonos(cantidad)
             }else{
@@ -29,10 +29,12 @@ class Persona(dni: String, cuenta: Cuenta) {
 
 }
 
-    fun esMoroso(persona: Persona): Boolean{
-        for(cuenta in persona.listaCuentas){
-            if(cuenta.saldo < 0){
-                return true
+    fun esMoroso(): Boolean {
+        for (cuenta in listaCuentas) {
+            if (cuenta != null) {
+                if (cuenta.saldo < 0) {
+                    return true
+                }
             }
         }
         return false
